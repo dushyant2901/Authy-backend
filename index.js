@@ -216,22 +216,26 @@ app.post("/movies/:movieId/rating", async (req, res) => {
 
 async function addRatingAndReview(movieId, reviewData) {
   try {
-    const movie = await Movie.findOne({ title: "Gully Boy" });
-
-    movie.ratings.push(reviewData.rating);
-    const newReview = {
-      user: reviewData.userId,
-      text: reviewData.review,
-    };
-    movie.reviews.push(newReview);
-    await movie.save();
-    const updatedMovieData = await Movie.findOne(movieId).populate(
-      "reviews.user",
-      "username profilePictureUrl"
-    );
-    return updatedMovieData;
+    const movie = await Movie.findById(movieId);
+    if (movieToUpdate) {
+      movie.ratings.push(reviewData.rating);
+      const newReview = {
+        user: reviewData.userId,
+        text: reviewData.review,
+      };
+      movie.reviews.push(newReview);
+      await movie.save();
+      const updatedMovieData = await Movie.findOne(movieId).populate(
+        "reviews.user",
+        "username profilePictureUrl"
+      );
+      return updatedMovieData;
+    } else {
+      console.error("Not Found");
+      return "not found";
+    }
   } catch (error) {
-    throw new Error("Movie Not Found");
+    return error;
   }
 }
 
