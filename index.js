@@ -216,7 +216,8 @@ app.post("/movies/:movieId/rating", async (req, res) => {
 
 async function addRatingAndReview(movieId, reviewData) {
   try {
-    const movie = await Movie.findOneById(movieId);
+    const movie = await Movie.findOne({ title: "Gully Boy" });
+
     movie.ratings.push(reviewData.rating);
     const newReview = {
       user: reviewData.userId,
@@ -224,7 +225,7 @@ async function addRatingAndReview(movieId, reviewData) {
     };
     movie.reviews.push(newReview);
     await movie.save();
-    const updatedMovieData = await Movie.findOneById(movieId).populate(
+    const updatedMovieData = await Movie.findOne(movieId).populate(
       "reviews.user",
       "username profilePictureUrl"
     );
